@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen py-8 px-4 bg-gray-50">
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="min-h-screen py-8 px-4 pb-5 bg-gray-50">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
 
         {{-- KOLOM KIRI: DETAIL TIKET --}}
         <div class="lg:col-span-2 space-y-6">
@@ -25,7 +25,6 @@
                     <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
                             <span class="block text-gray-500">Pelapor</span>
-                            {{-- PERBAIKAN: Menggunakan username --}}
                             <span class="font-medium text-gray-800">{{ $ticket->user->username ?? 'User' }}</span>
                         </div>
                         <div>
@@ -132,16 +131,15 @@
             @endif
             
             {{-- DISKUSI --}}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex flex-col">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col">
                 <div class="p-5 border-b border-gray-100 bg-gray-50 rounded-t-xl">
                     <h2 class="font-bold text-gray-800">Riwayat Diskusi</h2>
                 </div>
 
-                <div class="flex-1 p-5 overflow-y-auto max-h-[600px] space-y-4">
+                <div class="p-5 overflow-y-auto max-h-[400px] space-y-4">
                     @forelse ($ticket->comments as $comment)
                         <div class="flex gap-3 {{ $comment->user_id == Auth::id() ? 'flex-row-reverse' : '' }}">
                             <div class="flex-shrink-0">
-                                {{-- PERBAIKAN: Avatar menggunakan inisial username --}}
                                 <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600 uppercase">
                                     {{ substr($comment->user->username ?? 'U', 0, 2) }}
                                 </div>
@@ -149,7 +147,6 @@
                             <div class="max-w-[85%]">
                                 <div class="p-3 rounded-lg text-sm shadow-sm 
                                     {{ $comment->user_id == Auth::id() ? 'bg-blue-50 border border-blue-100 text-gray-800' : 'bg-gray-50 border border-gray-200 text-gray-800' }}">
-                                    {{-- PERBAIKAN: Nama user menggunakan username --}}
                                     <p class="font-bold text-xs mb-1 {{ $comment->user_id == Auth::id() ? 'text-blue-700' : 'text-gray-600' }}">
                                         {{ $comment->user->username ?? 'User' }}
                                     </p>

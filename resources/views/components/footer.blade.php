@@ -1,4 +1,4 @@
-<footer class="relative bottom-6 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] bg-[#0B1120] text-white rounded-3xl shadow-2xl z-40 border border-gray-800 flex flex-col md:flex-row justify-between items-center px-6 py-4">
+<footer class="mt-8 mb-8 mx-auto w-[95%] md:w-[90%] bg-[#0B1120] text-white rounded-3xl shadow-2xl border border-gray-800 flex flex-col md:flex-row justify-between items-center px-6 py-4">
     
     {{-- Kiri: Brand --}}
     <div class="flex items-center space-x-2 mb-2 md:mb-0">
