@@ -86,7 +86,7 @@ class UserSeeder extends Seeder
                     'location'      => "Gedung D4 Lt. " . rand(1, 3),
                     'status'        => $status,
                     'technician_id' => $assignedTechnician,
-                    'image'         => $imagePath,
+                    'image_path'    => $imagePath,
                 ]);
             }
         }
