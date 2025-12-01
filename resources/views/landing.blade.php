@@ -97,12 +97,28 @@
     <!-- Navigation -->
     <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] bg-white/90 backdrop-blur-md shadow-lg rounded-full px-6 py-3 flex justify-between items-center transition-all duration-300" id="navbar" style="z-index: 9999;">
         <a href="/" class="flex items-center space-x-2 group">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-xs font-bold shadow-md group-hover:scale-105 transition-transform">
-                P
+            <div style="font-family: 'Inter', sans-serif; font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                <div style="
+                    height: 38px; 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 8px;
+                ">
+                    <img 
+                        src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
+                        alt="Logo"
+                        style="
+                            height: 70%;
+                            width: auto;
+                            object-fit: contain;
+                        "
+                    >
+
+                    <div style="color: #0056D2; font-size: 20px; font-weight: 600;">
+                        Pens<span style="color: #FFC107;">HelpDesk</span>
+                    </div>
+                </div>
             </div>
-            <span class="font-bold text-gray-800 tracking-tight text-lg group-hover:text-blue-600 transition-colors">
-                PensHelpDesk
-            </span>
         </a>
         
         <div class="flex items-center space-x-2">

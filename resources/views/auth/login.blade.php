@@ -28,18 +28,49 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-
     <div class="flex w-full max-w-5xl bg-white shadow-2xl rounded-xl overflow-hidden">
-        
-        <div class="illustration-bg hidden md:flex md:w-5/12 p-8 flex-col justify-between text-white">
-            <div class="illustration-content">
-                <span class="text-xl font-bold">Tiancai</span>
+        <div class="illustration-bg hidden md:flex md:w-5/12 p-10 flex-col justify-between relative overflow-hidden rounded-r-2xl bg-gradient-to-b from-[#002E6E] to-[#004A9F] text-white">
+            <!-- Decorative Blur Background -->
+            <div class="absolute inset-0">
+                <div class="absolute rounded-full w-72 h-72 bg-white/10 blur-3xl -top-10 -left-10"></div>
+                <div class="absolute rounded-full w-56 h-56 bg-blue-300/10 blur-2xl bottom-0 right-0"></div>
             </div>
-            <div class="illustration-content flex flex-col items-center justify-center h-full">
-                <div class="w-full h-80 flex items-end justify-center">
-                    <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://i.imgur.com/example.png');">
-                        <img src="https://i.imgur.com/V7RzD2H.png" alt="Futuristic Programmer" class="w-full h-full object-contain mix-blend-screen opacity-70">
+
+            <!-- Top Section Logo -->
+            <div class="relative flex items-center gap-3">
+                <img 
+                    src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
+                    alt="Logo"
+                    class="h-12 w-auto object-contain drop-shadow-lg"
+                >
+                <div class="text-[26px] font-bold tracking-wide">
+                    <span class="text-white">Pens</span>
+                    <span class="text-yellow-400">HelpDesk</span>
+                </div>
+            </div>
+
+            <!-- Illustration -->
+            <div class="illustration-content relative flex flex-col items-center justify-center h-full mt-8">
+                <div class="w-full h-72 relative rounded-xl overflow-hidden shadow-xl">
+
+                    <!-- Pattern Background -->
+                    <div class="absolute inset-0 bg-cover bg-center opacity-30"
+                        style="background-image: url('https://i.imgur.com/example.png');">
                     </div>
+
+                    <!-- Main Image -->
+                    <img 
+                        src="{{ Vite::asset('public/aset/gedung pens.jpg') }}" 
+                        alt="Gedung PENS"
+                        class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-lighten"
+                    >
+
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+
+                <div class="mt-4 text-center text-white/90 text-sm tracking-wide">
+                    Membangun layanan kampus yang lebih cepat dan responsif.
                 </div>
             </div>
         </div>
