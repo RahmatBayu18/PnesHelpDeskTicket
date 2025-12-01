@@ -134,7 +134,7 @@
                             <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                         </span>
                         <span class="text-blue-700 font-semibold text-sm">
-                            Platform Helpdesk Kampus #1
+                            Platform Helpdesk Politeknik terbaik se-Asia #1
                         </span>
                     </div>
                     
@@ -144,7 +144,7 @@
                     </h1>
                     
                     <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
-                        Sistem helpdesk modern yang memudahkan mahasiswa melaporkan masalah fasilitas kampus. 
+                        Sistem helpdesk PENS yang memudahkan mahasiswa melaporkan masalah fasilitas kampus. 
                         <span class="font-semibold text-blue-600">Cepat, Transparan, dan Terpercaya.</span>
                     </p>
                     
@@ -153,7 +153,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
-                            Mulai Gratis
+                            Buat Laporan
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                             </svg>
@@ -296,7 +296,7 @@
                     </span>
                 </div>
                 <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6">
-                    Kenapa Memilih <span class="gradient-text">PensHelpDesk</span>?
+                    Kenapa Harus <span class="gradient-text">PensHelpDesk</span>?
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                     Platform yang dirancang khusus dengan teknologi terkini untuk memberikan pengalaman terbaik dalam pelaporan masalah kampus
@@ -378,7 +378,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-3">Daftar Akun</h3>
                     <p class="text-gray-600">
-                        Buat akun gratis menggunakan email kampus Anda dalam hitungan detik.
+                        Buat akun gratis menggunakan email student PENS kamu dalam hitungan detik.
                     </p>
                 </div>
                 
@@ -428,12 +428,12 @@
             <div class="max-w-4xl mx-auto text-center cta-content">
                 <div class="inline-block mb-6">
                     <span class="bg-white/20 text-white px-6 py-3 rounded-full text-sm font-bold backdrop-blur-sm border border-white/30">
-                        🚀 Bergabung Sekarang
+                        🚀 Jadi pelapor handal buat PENS lebih baik!
                     </span>
                 </div>
                 
                 <h2 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                    Siap Memulai Perjalanan Anda?
+                    Siap Menjadi Pelapor Handal?
                 </h2>
                 <p class="text-xl text-blue-50 mb-10 leading-relaxed max-w-2xl mx-auto">
                     Bergabunglah dengan <span class="font-bold text-yellow-300">ratusan mahasiswa</span> yang sudah merasakan kemudahan melaporkan masalah kampus.
@@ -443,7 +443,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                         </svg>
-                        Daftar Gratis Sekarang
+                        Daftar Akun Sekarang
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                         </svg>
@@ -459,7 +459,7 @@
                         <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
-                        <span class="font-semibold">99% Kepuasan</span>
+                        <span class="font-semibold">99% Puas</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
