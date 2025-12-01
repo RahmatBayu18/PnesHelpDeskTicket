@@ -139,7 +139,7 @@
                     </div>
                     
                     <h1 class="text-6xl md:text-7xl font-extrabold text-gray-900 leading-tight">
-                        Kelola Laporan
+                        Buat Laporan
                         <span class="gradient-text block mt-2">Lebih Efisien</span>
                     </h1>
                     

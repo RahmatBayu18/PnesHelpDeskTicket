@@ -60,7 +60,78 @@
         </div>
 
         {{-- KOLOM KANAN: KOMENTAR & DISKUSI --}}
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-1 space-y-6">
+            
+            {{-- FORM UPDATE STATUS (ADMIN & TEKNISI ONLY) --}}
+            @if(Auth::user()->role === 'admin' || Auth::user()->role === 'teknisi')
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                    <h2 class="font-bold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Kelola Tiket
+                    </h2>
+                    
+                    <form action="{{ route('tickets.update', $ticket->id) }}" method="POST" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+                        
+                        {{-- Status Update --}}
+                        <div>
+                            <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">Status Tiket</label>
+                            <select name="status" id="status" required class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                <option value="Open" {{ $ticket->status == 'Open' ? 'selected' : '' }}>🔴 Open</option>
+                                <option value="In Progress" {{ $ticket->status == 'In Progress' ? 'selected' : '' }}>🟡 In Progress</option>
+                                <option value="Resolved" {{ $ticket->status == 'Resolved' ? 'selected' : '' }}>🟢 Resolved</option>
+                                <option value="Closed" {{ $ticket->status == 'Closed' ? 'selected' : '' }}>⚫ Closed</option>
+                            </select>
+                        </div>
+                        
+                        {{-- Technician Assignment (ADMIN ONLY) --}}
+                        @if(Auth::user()->role === 'admin')
+                            <div>
+                                <label for="technician_id" class="block text-sm font-semibold text-gray-700 mb-2">Tugaskan Teknisi</label>
+                                <select name="technician_id" id="technician_id" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                    <option value="">-- Belum Ditugaskan --</option>
+                                    @foreach(\App\Models\User::where('role', 'teknisi')->get() as $tech)
+                                        <option value="{{ $tech->id }}" {{ $ticket->technician_id == $tech->id ? 'selected' : '' }}>
+                                            {{ $tech->username }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+                        
+                        {{-- Current Technician Info --}}
+                        @if($ticket->technician)
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <p class="text-xs font-semibold text-blue-700 mb-1">Teknisi Saat Ini:</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                                        {{ substr($ticket->technician->username, 0, 2) }}
+                                    </div>
+                                    <span class="text-sm font-medium text-blue-900">{{ $ticket->technician->username }}</span>
+                                </div>
+                            </div>
+                        @else
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                <p class="text-xs text-yellow-700">
+                                    <span class="font-semibold">⚠️ Belum ada teknisi yang ditugaskan</span>
+                                </p>
+                            </div>
+                        @endif
+                        
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-blue-700 transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Update Tiket
+                        </button>
+                    </form>
+                </div>
+            @endif
+            
+            {{-- DISKUSI --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex flex-col">
                 <div class="p-5 border-b border-gray-100 bg-gray-50 rounded-t-xl">
                     <h2 class="font-bold text-gray-800">Riwayat Diskusi</h2>
@@ -106,7 +177,7 @@
                 </div>
             </div>
         </div>
-
+        
     </div>
 </div>
 @endsection
