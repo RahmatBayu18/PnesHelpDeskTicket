@@ -2,12 +2,28 @@
     
     {{-- LOGO & BRAND --}}
     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 group">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-xs font-bold shadow-md group-hover:scale-105 transition-transform">
-            P
+        <div style="font-family: 'Inter', sans-serif; font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+            <div style="
+                height: 48px; 
+                display: flex; 
+                align-items: center; 
+                gap: 8px;
+            ">
+                <img 
+                    src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
+                    alt="Logo"
+                    style="
+                        height: 100%;
+                        width: auto;
+                        object-fit: contain;
+                    "
+                >
+
+                <div style="color: #0056D2; font-size: 20px; font-weight: 600;">
+                    Pens<span style="color: #FFC107;">HelpDesk</span>
+                </div>
+            </div>
         </div>
-        <span class="font-bold text-gray-800 tracking-tight text-lg group-hover:text-blue-600 transition-colors">
-            PensHelpDesk
-        </span>
     </a>
 
     {{-- NAVIGATION LINKS (Desktop) --}}
