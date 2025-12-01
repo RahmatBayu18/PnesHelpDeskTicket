@@ -189,7 +189,7 @@ function selectConversation(conversationId) {
     window.Echo.private(`chat.${conversationId}`)
         .listen('.message.sent', (e) => {
             console.log('Message received:', e);
-            appendMessage(e); // appendMessage now handles duplicates and sound
+            appendMessage(e, true); // Pass true to indicate this is a new real-time message
             scrollToBottom();
         })
         .error((error) => {
@@ -212,7 +212,7 @@ function loadMessages(conversationId) {
             container.innerHTML = '';
             
             data.messages.forEach(message => {
-                appendMessage(message);
+                appendMessage(message, false); // Pass false to indicate historical message (no sound)
             });
             
             scrollToBottom();
@@ -242,7 +242,7 @@ function playNotificationSound() {
     }
 }
 
-function appendMessage(message) {
+function appendMessage(message, isNewMessage = false) {
     const container = document.getElementById('messages-container');
     const isOwnMessage = message.user_id === currentUserId;
     
@@ -269,8 +269,8 @@ function appendMessage(message) {
     
     container.appendChild(messageDiv);
     
-    // Play sound if message is from another user
-    if (!isOwnMessage) {
+    // Play sound only for new real-time messages from other users
+    if (!isOwnMessage && isNewMessage) {
         playNotificationSound();
     }
 }

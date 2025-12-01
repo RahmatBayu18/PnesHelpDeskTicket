@@ -7,11 +7,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <title>PensHelpDesk</title>
 </head>
-<body class="{{ request()->routeIs('chat.index') ? 'overflow-hidden' : '' }}">
+<body class="{{ request()->routeIs('chat.index') ? 'overflow-hidden' : 'flex flex-col min-h-screen' }}">
 
     <x-header />
 
-    <div class="{{ request()->routeIs('chat.index') ? '' : 'pt-32' }}">
+    <div class="{{ request()->routeIs('chat.index') ? '' : 'pt-32 flex-grow' }}">
         @yield('content')
     </div>
 

@@ -6,7 +6,7 @@
         viewMode: localStorage.getItem('ticketViewMode') || 'grid' 
      }" 
      x-init="$watch('viewMode', val => localStorage.setItem('ticketViewMode', val))"
-     class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+     class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-40 bg-gray-50">
     
     <div class="max-w-7xl mx-auto space-y-8">
 

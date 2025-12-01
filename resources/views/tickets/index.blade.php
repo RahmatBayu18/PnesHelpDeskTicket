@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+<div class="py-8 px-4 sm:px-6 lg:px-8 pb-40 bg-gray-50">
     <div class="max-w-7xl mx-auto space-y-8">
         
         {{-- HEADER DASHBOARD --}}
