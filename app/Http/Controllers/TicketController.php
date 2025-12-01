@@ -10,77 +10,100 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\TicketStatusUpdated;
+use App\Models\Announcement;
 
 class TicketController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user();
+        // Query ambil semua tiket (Global)
         $query = Ticket::with(['category', 'user', 'technician'])->latest();
 
-        // LOGIKA ROLE:
-        // Jika Mahasiswa: Hanya lihat tiket sendiri
-        if ($user->role === 'mahasiswa') {
-            $query->where('user_id', $user->id);
+        // Filter Status (Jika ada request filter dari view)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
-        // Jika Teknisi: Lihat tiket yang ditugaskan ke dia ATAU tiket yang belum ada teknisinya (Open)
-        elseif ($user->role === 'teknisi') {
-            $query->where(function($q) use ($user) {
-                $q->where('technician_id', $user->id)
-                  ->orWhere('technician_id', null);
-            });
-        }
-        // Jika Admin: Lihat SEMUA tiket (tidak perlu filter tambahan)
-
-        // Filter Tambahan (Status/Kategori) sama seperti sebelumnya...
-        if ($request->filled('status')) $query->where('status', $request->status);
 
         $tickets = $query->paginate(10);
         
-        // Ambil list teknisi untuk dropdown assign (hanya untuk Admin)
+        // Ambil list teknisi untuk dropdown assign (Khusus view Admin)
         $technicians = User::where('role', 'teknisi')->get();
 
         return view('tickets.index', compact('tickets', 'technicians'));
     }
 
-    // Update Status & Assign Teknisi (Khusus Admin/Teknisi)
-    public function update(Request $request, Ticket $ticket)
+   public function studentDashboard(Request $request)
     {
-        // Validasi akses (bisa dipindah ke Middleware/Policy)
-        if (Auth::user()->role === 'mahasiswa') {
-            abort(403);
-        }
+        // 1. Ambil Pengumuman
+        $announcements = Announcement::where('is_active', true)->latest()->get();
 
-        $request->validate([
-            'status' => 'required|in:Open,In Progress,Resolved,Closed',
-            'technician_id' => 'nullable|exists:users,id'
-        ]);
-
-        $oldStatus = $ticket->status;
+        // 2. Query SEMUA TIKET (Global)
+        // Eager load 'user' agar kita bisa tampilkan siapa pelapornya
+        $query = Ticket::with(['category', 'user', 'technician']); 
         
-        // Update Data
-        $ticket->update([
-            'status' => $request->status,
-            'technician_id' => $request->technician_id ?? $ticket->technician_id
-        ]);
-
-        // KIRIM NOTIFIKASI jika status berubah
-        if ($oldStatus !== $request->status) {
-            // Kirim ke Pemilik Tiket (Mahasiswa)
-            $ticket->user->notify(new TicketStatusUpdated($ticket, $request->status));
+        // Filter Search (Judul atau Kode)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('ticket_code', 'like', "%{$search}%");
+            });
         }
 
-        return back()->with('success', 'Tiket berhasil diperbarui.');
+        // Filter Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter Tanggal
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // 3. Pagination (9 per halaman)
+        $tickets = $query->latest()->paginate(9);
+
+        return view('student.dashboard', compact('announcements', 'tickets'));
     }
 
-    // Halaman Form Buat Tiket
+    public function myTickets(Request $request)
+    {
+        // Method ini HANYA fokus ke Search, Filter, dan Pagination Tiket
+        $query = Ticket::where('user_id', Auth::id())
+                    ->with(['category', 'user', 'technician']);
+
+        // Filter Logic (Sama seperti sebelumnya)
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', "%{$request->search}%")
+                ->orWhere('ticket_code', 'like', "%{$request->search}%");
+            });
+        }
+        if ($request->filled('status')) $query->where('status', $request->status);
+        if ($request->filled('date_from')) $query->whereDate('created_at', '>=', $request->date_from);
+        if ($request->filled('date_to')) $query->whereDate('created_at', '<=', $request->date_to);
+
+        $tickets = $query->latest()->paginate(9);
+
+        // Kita tidak kirim $announcements ke sini lagi, karena sudah ada di Home
+        return view('tickets.my_tickets', compact('tickets'));
+    }
+
+    /**
+     * CREATE FORM
+     */
     public function create()
     {
         $categories = Category::all();
         return view('tickets.create', compact('categories'));
     }
 
-    // Simpan Tiket
+    /**
+     * STORE TIKET
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -103,20 +126,78 @@ class TicketController extends Controller
             'description' => $request->description,
             'location' => $request->location,
             'image_path' => $imagePath,
-            // ticket_code dibuat otomatis di Model
+            'status' => 'Open', // Default status
+            // ticket_code dibuat otomatis di Model Ticket (boot method)
         ]);
 
-        return redirect()->route('tickets.index')->with('success', 'Tiket berhasil dibuat!');
+        // Redirect ke 'Tiket Saya' agar user melihat tiket barunya
+        return redirect()->route('tickets.my_tickets')->with('success', 'Tiket berhasil dibuat!');
     }
 
-    // Halaman Detail Tiket
+    /**
+     * SHOW DETAIL
+     */
     public function show(Ticket $ticket)
     {
         $ticket->load(['comments.user', 'category']);
         return view('tickets.show', compact('ticket'));
     }
 
-    // Simpan Komentar
+    /**
+     * UPDATE TIKET (Logika Role)
+     */
+    public function update(Request $request, Ticket $ticket)
+    {
+        $user = Auth::user();
+
+        // 1. Mahasiswa TIDAK BOLEH update tiket
+        if ($user->role === 'mahasiswa') {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $oldStatus = $ticket->status;
+
+        // 2. Logika TEKNISI (Hanya Progress & Auto Assign)
+        if ($user->role === 'teknisi') {
+            $request->validate([
+                'status' => 'required|in:Open,In Progress,Resolved,Closed'
+            ]);
+            
+            // Jika tiket belum ada teknisinya, otomatis ambil alih
+            if (!$ticket->technician_id) {
+                $ticket->technician_id = $user->id;
+            }
+
+            $ticket->update(['status' => $request->status]);
+        }
+        
+        // 3. Logika ADMIN (Full Control: Status & Ganti Teknisi)
+        elseif ($user->role === 'admin') {
+            $validated = $request->validate([
+                'status' => 'required|in:Open,In Progress,Resolved,Closed',
+                'technician_id' => 'nullable|exists:users,id'
+            ]);
+
+            $ticket->update($validated);
+        }
+
+        // KIRIM NOTIFIKASI (Jika status berubah)
+        // Pastikan class TicketStatusUpdated ada di App/Notifications
+        if ($oldStatus !== $request->status) {
+            try {
+                $ticket->user->notify(new TicketStatusUpdated($ticket, $request->status));
+            } catch (\Exception $e) {
+                // Jangan biarkan error notifikasi menghentikan proses update
+                // Log error jika perlu
+            }
+        }
+
+        return back()->with('success', 'Tiket berhasil diperbarui.');
+    }
+
+    /**
+     * STORE KOMENTAR
+     */
     public function storeComment(Request $request, Ticket $ticket)
     {
         $request->validate(['message' => 'required']);
@@ -130,12 +211,14 @@ class TicketController extends Controller
         return back()->with('success', 'Komentar ditambahkan.');
     }
 
-    // Destroyyyyy!!!
+    /**
+     * DESTROY (Hapus Tiket)
+     */
     public function destroy(Ticket $ticket)
     {
         // Hanya Admin yang boleh menghapus
         if (Auth::user()->role !== 'admin') {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Hanya Admin yang bisa menghapus tiket.');
         }
 
         // Hapus gambar dari storage jika ada
