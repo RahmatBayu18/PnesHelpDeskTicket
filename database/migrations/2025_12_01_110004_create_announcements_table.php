@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('announcements', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->text('content'); // Isi pengumuman
-            $table->enum('type', ['info', 'warning', 'danger'])->default('info'); // Warna background
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+        $table->id();
+        $table->foreignId('user_id')->after('id')->constrained()->onDelete('cascade'); 
+        
+        $table->string('title');
+        $table->string('category')->after('title')->default('Umum'); 
+        
+        $table->text('content'); 
+        $table->enum('type', ['info', 'warning', 'danger'])->default('info');
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
     }
 
     /**

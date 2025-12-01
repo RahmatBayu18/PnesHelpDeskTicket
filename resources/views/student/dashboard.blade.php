@@ -6,40 +6,90 @@
 
         {{-- BAGIAN 1: HEADER & PENGUMUMAN --}}
         <div class="flex flex-col md:flex-row gap-6">
-            {{-- Welcome Message (Kiri) --}}
+            
+            {{-- A. Welcome Message & Quick Action (Kiri - Lebar 1/3) --}}
             <div class="w-full md:w-1/3">
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 h-full">
-                    <h1 class="text-2xl font-bold text-gray-900">Halo, {{ Auth::user()->username }}! 👋</h1>
-                    <p class="text-sm text-gray-500 mt-2">Ini adalah daftar laporan fasilitas terkini di seluruh kampus.</p>
-                    <a href="{{ route('tickets.create') }}" class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-sm font-medium">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-6 shadow-lg text-white h-full flex flex-col justify-between relative overflow-hidden">
+                    {{-- Dekorasi Background --}}
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-blue-400 opacity-10 rounded-full blur-xl"></div>
+                    
+                    <div>
+                        <h1 class="text-2xl font-bold">Halo, {{ Auth::user()->username }}! 👋</h1>
+                        <p class="text-blue-100 text-sm mt-2 leading-relaxed">
+                            Selamat datang di Dashboard Mahasiswa. Pantau status laporan fasilitas kampus di sini.
+                        </p>
+                    </div>
+
+                    <a href="{{ route('tickets.create') }}" class="mt-6 w-full bg-white text-blue-700 px-4 py-3 rounded-lg hover:bg-blue-50 transition flex items-center justify-center gap-2 shadow-sm font-bold text-sm group">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Buat Laporan Baru
                     </a>
                 </div>
             </div>
 
-            {{-- Papan Pengumuman (Kanan - Scrollable jika banyak) --}}
+            {{-- B. Papan Pengumuman (Kanan - Lebar 2/3) --}}
             <div class="w-full md:w-2/3">
-                @if($announcements->count() > 0)
-                    <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 h-full max-h-48 overflow-y-auto">
-                        <h2 class="font-bold text-blue-800 flex items-center mb-3">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                            Pengumuman Admin
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex flex-col">
+                    
+                    {{-- Header Pengumuman --}}
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+                        <h2 class="font-bold text-gray-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                            Papan Pengumuman
                         </h2>
-                        <div class="space-y-3">
-                            @foreach($announcements as $info)
-                                <div class="bg-white/60 p-3 rounded-lg border border-blue-100">
-                                    <h3 class="font-semibold text-blue-900 text-sm">{{ $info->title }}</h3>
-                                    <p class="text-blue-700 text-xs mt-1">{{ $info->content }}</p>
+                        {{-- Indikator Jumlah --}}
+                        @if($announcements->count() > 0)
+                            <span class="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded-full font-bold">
+                                {{ $announcements->count() }} Terbaru
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- List Pengumuman (Scrollable) --}}
+                    <div class="p-4 overflow-y-auto max-h-[250px] space-y-3 custom-scrollbar">
+                        @forelse($announcements as $info)
+                            {{-- Link ke Detail Pengumuman --}}
+                            <a href="{{ route('announcements.show', $info->id) }}" class="block group">
+                                <div class="relative bg-white border rounded-lg p-4 transition-all duration-200 hover:shadow-md hover:border-blue-300
+                                    @if($info->type == 'danger') border-l-4 border-l-red-500 border-gray-200
+                                    @elseif($info->type == 'warning') border-l-4 border-l-yellow-500 border-gray-200
+                                    @else border-l-4 border-l-blue-500 border-gray-200 @endif">
+                                    
+                                    <div class="flex justify-between items-start mb-1">
+                                        <h3 class="font-bold text-gray-900 text-sm group-hover:text-blue-600 transition-colors line-clamp-1">
+                                            {{ $info->title }}
+                                        </h3>
+                                        {{-- Badge Kategori --}}
+                                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 border border-gray-200">
+                                            {{ $info->category ?? 'UMUM' }}
+                                        </span>
+                                    </div>
+
+                                    <p class="text-xs text-gray-500 line-clamp-2 mb-2 leading-relaxed">
+                                        {{ Str::limit($info->content, 120) }}
+                                    </p>
+
+                                    <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-2">
+                                        <div class="flex items-center text-[10px] text-gray-400">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            {{ $info->created_at->format('d M Y') }}
+                                        </div>
+                                        <span class="text-[10px] font-bold text-blue-600 flex items-center group-hover:underline">
+                                            Baca Surat
+                                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                        </span>
+                                    </div>
                                 </div>
-                            @endforeach
-                        </div>
+                            </a>
+                        @empty
+                            <div class="flex flex-col items-center justify-center h-40 text-gray-400">
+                                <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                <p class="text-sm">Tidak ada pengumuman terbaru.</p>
+                            </div>
+                        @endforelse
                     </div>
-                @else
-                    <div class="bg-white rounded-xl p-6 border border-gray-200 h-full flex items-center justify-center text-gray-400 text-sm">
-                        Tidak ada pengumuman terbaru.
-                    </div>
-                @endif
+                </div>
             </div>
         </div>
 

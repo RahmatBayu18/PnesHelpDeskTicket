@@ -31,19 +31,33 @@
             <form action="{{ route('announcements.store') }}" method="POST" class="space-y-4">
                 @csrf
                 
+                {{-- GRID BARIS PERTAMA: Judul, Kategori, Tipe --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {{-- Judul --}}
-                    <div class="md:col-span-2">
+                    
+                    {{-- 1. Input Judul --}}
+                    <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Judul Pengumuman</label>
                         <input type="text" name="title" required 
-                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                            placeholder="Contoh: Pemeliharaan Server Terjadwal">
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5 text-sm"
+                            placeholder="Contoh: Pemeliharaan Server">
                     </div>
 
-                    {{-- Type --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
-                        <select name="type" required class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                    {{-- 2. Input Kategori (BARU) --}}
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                        <select name="category" required class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5 text-sm">
+                            <option value="BAAK">BAAK</option>
+                            <option value="Keuangan">Keuangan</option>
+                            <option value="Kemahasiswaan">Kemahasiswaan</option>
+                            <option value="Jurusan">Jurusan</option>
+                            <option value="Umum" selected>Umum</option>
+                        </select>
+                    </div>
+
+                    {{-- 3. Input Tipe --}}
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipe / Warna</label>
+                        <select name="type" required class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5 text-sm">
                             <option value="info">Info (Biru)</option>
                             <option value="warning">Peringatan (Kuning)</option>
                             <option value="danger">Penting (Merah)</option>
@@ -51,15 +65,15 @@
                     </div>
                 </div>
 
-                {{-- Konten --}}
+                {{-- BARIS KEDUA: Isi Konten --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Isi Pengumuman</label>
                     <textarea name="content" rows="4" required
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5 text-sm"
                         placeholder="Tulis detail pengumuman di sini..."></textarea>
                 </div>
 
-                {{-- Checkbox Kirim Notifikasi --}}
+                {{-- BARIS KETIGA: Notifikasi --}}
                 <div class="flex items-center">
                     <input id="send_notification" name="send_notification" type="checkbox" checked
                         class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
@@ -68,9 +82,9 @@
                     </label>
                 </div>
 
-                {{-- Submit Button --}}
+                {{-- TOMBOL SUBMIT --}}
                 <div class="flex justify-end">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-md font-medium">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-md font-medium text-sm">
                         Publikasikan Pengumuman
                     </button>
                 </div>

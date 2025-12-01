@@ -55,6 +55,9 @@ Route::middleware(['auth'])->group(function () {
          ->name('notifications.mark-read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])
          ->name('notifications.mark-all-read');
+    // Route Detail Pengumuman (Bisa diakses Mahasiswa & Admin)
+    Route::get('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'show'])
+         ->name('announcements.show');
 
     // --- 5. PROFILE ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
