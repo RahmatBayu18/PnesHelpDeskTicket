@@ -2,10 +2,26 @@
     
     {{-- Kiri: Brand --}}
     <div class="flex items-center space-x-2 mb-2 md:mb-0">
-        <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-900/50">
-            P
-        </div>
-        <span class="font-bold tracking-tight text-white text-sm">PensHelpDesk</span>
+        <div style="
+            height: 38px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+        ">
+            <img 
+                src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
+                alt="Logo"
+                style="
+                    height: 70%;
+                    width: auto;
+                    object-fit: contain;
+                "
+                >
+
+                <div style="color: #0056D2; font-size: 20px; font-weight: 600;">
+                    Pens<span style="color: #FFC107;">HelpDesk</span>
+                </div>
+            </div>
     </div>
 
     {{-- Tengah: Copyright (Hidden di HP biar gak penuh, muncul di MD ke atas) --}}

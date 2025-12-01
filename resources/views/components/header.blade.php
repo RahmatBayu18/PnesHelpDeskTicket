@@ -4,7 +4,7 @@
     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 group">
         <div style="font-family: 'Inter', sans-serif; font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
             <div style="
-                height: 48px; 
+                height: 38px; 
                 display: flex; 
                 align-items: center; 
                 gap: 8px;
@@ -13,7 +13,7 @@
                     src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
                     alt="Logo"
                     style="
-                        height: 100%;
+                        height: 70%;
                         width: auto;
                         object-fit: contain;
                     "
