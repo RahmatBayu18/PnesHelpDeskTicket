@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',     // Kolom role enum
+        'profile_picture', // Profile picture path
     ];
 
     /**

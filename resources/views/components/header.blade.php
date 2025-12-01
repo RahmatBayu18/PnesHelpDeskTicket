@@ -121,9 +121,15 @@
                         <p class="text-[10px] text-gray-500 uppercase tracking-wide mt-0.5">{{ auth()->user()->role }}</p>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border border-white shadow-sm overflow-hidden p-0.5">
-                        <img class="w-full h-full rounded-full object-cover" 
-                             src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->username) }}&background=0D8ABC&color=fff&bold=true" 
-                             alt="Avatar">
+                        @if(auth()->user()->profile_picture)
+                            <img class="w-full h-full rounded-full object-cover" 
+                                 src="{{ asset('storage/' . auth()->user()->profile_picture) }}" 
+                                 alt="Profile Picture">
+                        @else
+                            <img class="w-full h-full rounded-full object-cover" 
+                                 src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->username) }}&background=0D8ABC&color=fff&bold=true" 
+                                 alt="Avatar">
+                        @endif
                     </div>
                 </div>
 
@@ -135,7 +141,7 @@
                         <p class="text-xs text-gray-500 capitalize">{{ auth()->user()->role }}</p>
                     </div>
 
-                    <a href="#" class="flex items-center px-3 py-2.5 rounded-xl text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition group/link">
+                    <a href="{{ route('profile.edit') }}" class="flex items-center px-3 py-2.5 rounded-xl text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition group/link">
                         <svg class="w-4 h-4 mr-3 text-gray-400 group-hover/link:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         Profile Saya
                     </a>

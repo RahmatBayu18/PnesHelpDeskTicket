@@ -7,6 +7,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -55,7 +56,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])
          ->name('notifications.mark-all-read');
 
-    // --- 5. AREA ADMIN ---
+    // --- 5. PROFILE ---
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::post('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.picture.update');
+    Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])->name('profile.picture.delete');
+
+    // --- 6. AREA ADMIN ---
     Route::prefix('admin')->group(function() { 
         
         // Role Management
