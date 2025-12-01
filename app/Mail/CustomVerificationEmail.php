@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\URL;
 use App\Models\User;
 
 class CustomVerificationEmail extends Mailable
@@ -18,8 +20,15 @@ class CustomVerificationEmail extends Mailable
     {
         $this->user = $user;
 
-        // Generate URL verifikasi standar Laravel
-        $this->verificationUrl = url("/email/verify/" . $user->id . "/" . sha1($user->email));
+        // Generate signed URL verifikasi dengan signature yang valid
+        $this->verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(60), // URL valid untuk 60 menit
+            [
+                'id' => $user->id,
+                'hash' => sha1($user->email)
+            ]
+        );
     }
 
     public function build()

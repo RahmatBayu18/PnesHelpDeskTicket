@@ -1,7 +1,7 @@
 @component('mail::message')
 # Halo, {{ $user->username }}
 
-Terima kasih telah mendaftar di platform kami.  
+Terima kasih telah mendaftar di platform pelaporan PensHelpDesk.  
 Silakan verifikasi email Anda dengan mengklik tombol di bawah:
 
 @component('mail::button', ['url' => $verificationUrl])

@@ -44,17 +44,35 @@ Route::middleware('guest')->group(function () {
 });
 
 // EMAIL VERIFICATION ROUTES
+// Email verification handler - TIDAK memerlukan auth middleware
+Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+    $user = \App\Models\User::findOrFail($request->route('id'));
+
+    // Verifikasi hash email
+    if (! hash_equals(sha1($user->email), (string) $request->route('hash'))) {
+        abort(403, 'Invalid verification link');
+    }
+
+    // Verifikasi signature
+    if (! $request->hasValidSignature()) {
+        abort(403, 'Invalid or expired verification link');
+    }
+
+    // Tandai email sebagai terverifikasi
+    if (! $user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    // Redirect dengan pesan sukses
+    return redirect('/login')->with('success', 'Email berhasil diverifikasi! Silakan login.');
+})->middleware(['signed'])->name('verification.verify');
+
+// Routes yang memerlukan auth
 Route::middleware('auth')->group(function () {
     // Email verification notice
     Route::get('/email/verify', function () {
         return view('auth.verify-email');
     })->name('verification.notice');
-
-    // Email verification handler
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-        return redirect('/dashboard')->with('success', 'Email berhasil diverifikasi!');
-    })->middleware(['signed'])->name('verification.verify');
 
     // Resend verification email
     Route::post('/email/verification-notification', function (Request $request) {
