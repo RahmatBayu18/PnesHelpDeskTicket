@@ -10,8 +10,15 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    // Show landing page for guests, redirect to dashboard for authenticated users
+    if (Auth::check()) {
+        if (Auth::user()->role === 'mahasiswa') {
+            return redirect()->route('student.dashboard');
+        }
+        return redirect()->route('tickets.index');
+    }
+    return view('landing');
+})->name('landing');
 
 // GROUP GUEST
 Route::middleware('guest')->group(function () {
