@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\TicketStatusUpdated;
+use App\Notifications\NewCommentNotification;
 use App\Models\Announcement;
 
 class TicketController extends Controller
@@ -238,11 +239,59 @@ class TicketController extends Controller
     {
         $request->validate(['message' => 'required']);
 
-        Comment::create([
+        $comment = Comment::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
             'message' => $request->message,
         ]);
+
+        // Get the commenter info
+        $commenter = Auth::user();
+
+        // Send notifications to relevant users (excluding the commenter)
+        $usersToNotify = collect();
+
+        // 1. If commenter is mahasiswa, notify admin and assigned teknisi
+        if ($commenter->role === 'mahasiswa') {
+            // Notify all admins
+            $admins = User::where('role', 'admin')->get();
+            $usersToNotify = $usersToNotify->merge($admins);
+
+            // Notify assigned technician if exists
+            if ($ticket->technician_id && $ticket->technician_id !== $commenter->id) {
+                $usersToNotify->push($ticket->technician);
+            }
+        }
+        // 2. If commenter is teknisi, notify admin and ticket creator
+        elseif ($commenter->role === 'teknisi') {
+            // Notify all admins
+            $admins = User::where('role', 'admin')->get();
+            $usersToNotify = $usersToNotify->merge($admins);
+
+            // Notify ticket creator (mahasiswa)
+            if ($ticket->user_id !== $commenter->id) {
+                $usersToNotify->push($ticket->user);
+            }
+        }
+        // 3. If commenter is admin, notify teknisi and ticket creator
+        elseif ($commenter->role === 'admin') {
+            // Notify assigned technician
+            if ($ticket->technician_id) {
+                $usersToNotify->push($ticket->technician);
+            }
+
+            // Notify ticket creator (mahasiswa)
+            if ($ticket->user_id !== $commenter->id) {
+                $usersToNotify->push($ticket->user);
+            }
+        }
+
+        // Remove duplicates and send notifications
+        $usersToNotify = $usersToNotify->unique('id')->filter();
+
+        foreach ($usersToNotify as $user) {
+            $user->notify(new NewCommentNotification($ticket, $comment, $commenter));
+        }
 
         return back()->with('success', 'Komentar ditambahkan.');
     }
