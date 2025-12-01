@@ -1,7 +1,6 @@
 <header class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] bg-white/90 backdrop-blur-md shadow-lg rounded-full px-6 py-3 flex justify-between items-center z-50 transition-all duration-300">
     
     {{-- LOGO & BRAND --}}
-    {{-- Klik logo akan otomatis diarahkan ke route 'dashboard' yang sudah punya logika redirect --}}
     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 group">
         <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-xs font-bold shadow-md group-hover:scale-105 transition-transform">
             P
@@ -18,14 +17,12 @@
             @if(auth()->user()->role === 'mahasiswa')
                 {{-- MENU KHUSUS MAHASISWA --}}
                 
-                {{-- 1. Home --}}
                 <a href="{{ route('student.dashboard') }}" 
                    class="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200
                    {{ request()->routeIs('student.dashboard') ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900' }}">
                    Home
                 </a>
 
-                {{-- 2. Tiket Saya --}}
                 <a href="{{ route('tickets.my_tickets') }}" 
                    class="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200
                    {{ request()->routeIs('tickets.my_tickets*') ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900' }}">
@@ -46,6 +43,12 @@
                        class="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200
                        {{ request()->routeIs('roles.*') ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900' }}">
                        Users & Role
+                    </a>
+
+                    <a href="{{ route('announcements.index') }}" 
+                       class="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200
+                       {{ request()->routeIs('announcements.*') ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900' }}">
+                       Pengumuman
                     </a>
                 @endif
             @endif
@@ -75,14 +78,20 @@
                 <div class="absolute right-0 mt-4 w-80 bg-white shadow-xl rounded-2xl border border-gray-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
                     <div class="flex justify-between items-center px-4 py-2 border-b border-gray-50">
                         <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Notifikasi</span>
-                        @if(auth()->user()->unreadNotifications->count() > 0)
-                            <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{{ auth()->user()->unreadNotifications->count() }} Baru</span>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{{ auth()->user()->unreadNotifications->count() }} Baru</span>
+                                <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-[10px] text-blue-600 hover:text-blue-800 font-medium">Tandai Semua</button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                     
                     <div class="max-h-64 overflow-y-auto">
                         @forelse(auth()->user()->unreadNotifications->take(5) as $notif)
-                            <a href="#" class="block px-4 py-3 hover:bg-gray-50 rounded-lg transition group/item">
+                            <a href="{{ route('notifications.mark-read', $notif->id) }}" class="block px-4 py-3 hover:bg-gray-50 rounded-lg transition group/item">
                                 <div class="flex items-start">
                                     <div class="flex-shrink-0 mt-1">
                                         <div class="w-2 h-2 rounded-full bg-blue-500"></div>
@@ -108,7 +117,6 @@
             <div class="relative group cursor-pointer pl-2">
                 <div class="flex items-center space-x-2">
                     <div class="text-right hidden sm:block">
-                        {{-- Menggunakan 'username' sesuai controller register Anda --}}
                         <p class="text-sm font-bold text-gray-800 leading-none">{{ auth()->user()->username }}</p>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wide mt-0.5">{{ auth()->user()->role }}</p>
                     </div>
@@ -122,7 +130,6 @@
                 {{-- Dropdown Menu --}}
                 <div class="absolute right-0 mt-4 w-56 bg-white shadow-xl rounded-2xl border border-gray-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
                     
-                    {{-- Mobile View Info (Muncul hanya di HP) --}}
                     <div class="sm:hidden px-3 py-2 border-b border-gray-50 mb-1">
                         <p class="text-sm font-bold text-gray-800">{{ auth()->user()->username }}</p>
                         <p class="text-xs text-gray-500 capitalize">{{ auth()->user()->role }}</p>
@@ -135,7 +142,6 @@
 
                     <div class="h-px bg-gray-100 my-1"></div>
 
-                    {{-- Secure Logout --}}
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="w-full flex items-center px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-50 transition group/logout">
@@ -147,7 +153,6 @@
             </div>
 
         @else
-            {{-- JIKA BELUM LOGIN --}}
             <div class="flex items-center space-x-1">
                 <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition">Masuk</a>
                 <a href="{{ route('register') }}" class="px-5 py-2 text-sm font-bold bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">Daftar</a>
