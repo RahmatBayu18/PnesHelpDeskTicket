@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AuthControl;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\RoleController;
@@ -28,8 +30,28 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthControl::class, 'login']);
 });
 
+// EMAIL VERIFICATION ROUTES
+Route::middleware('auth')->group(function () {
+    // Email verification notice
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    // Email verification handler
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect('/dashboard')->with('success', 'Email berhasil diverifikasi!');
+    })->middleware(['signed'])->name('verification.verify');
+
+    // Resend verification email
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', 'Link verifikasi telah dikirim ulang!');
+    })->middleware(['throttle:6,1'])->name('verification.send');
+});
+
 // GROUP AUTH
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     
     // Logout
     Route::post('/logout', [AuthControl::class, 'logout'])->name('logout');

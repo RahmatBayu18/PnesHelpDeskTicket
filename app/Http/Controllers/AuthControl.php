@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
 class AuthControl extends Controller
 {
@@ -31,9 +32,12 @@ class AuthControl extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Trigger email verification
+        event(new Registered($user));
+
         Auth::login($user);
 
-        return redirect('/dashboard'); 
+        return redirect()->route('verification.notice');
     }
 
     public function showLoginForm()
