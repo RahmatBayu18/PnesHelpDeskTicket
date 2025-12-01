@@ -45,6 +45,9 @@ class TicketController extends Controller
             // Syntax khusus SQLite: strftime('%m', ...) ambil bulan angka 01-12
             // Kita cast ke integer agar "01" jadi 1, supaya cocok dengan looping php
             $selectQuery = "CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as count";
+        } elseif ($dbDriver === 'pgsql') {
+            // Syntax PostgreSQL: EXTRACT(MONTH FROM ...) 
+            $selectQuery = 'EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count';
         } else {
             // Syntax MySQL (Default)
             $selectQuery = 'MONTH(created_at) as month, COUNT(*) as count';

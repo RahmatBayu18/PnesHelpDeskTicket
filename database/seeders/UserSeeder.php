@@ -24,31 +24,34 @@ class UserSeeder extends Seeder
 
         // 2. Buat Users (Sesuaikan dengan kolom tabel Anda: username & nim)
         
-        // ADMIN
+        // ADMIN - Already verified (no email verification needed)
         $admin = User::create([
             'username' => 'admin_pens',      // Ganti name jadi username
             'nim'      => 'ADM001',          // NIM Dummy untuk Admin
             'email'    => 'admin@pens.ac.id',
             'password' => Hash::make('password'),
             'role'     => 'admin',
+            'email_verified_at' => now(),    // Admin doesn't need to verify email
         ]);
 
-        // TEKNISI
+        // TEKNISI - Already verified (no email verification needed)
         $teknisi = User::create([
             'username' => 'budi_teknisi',    // Ganti name jadi username
             'nim'      => 'TEK001',          // NIM Dummy untuk Teknisi
             'email'    => 'teknisi@pens.ac.id',
             'password' => Hash::make('password'),
             'role'     => 'teknisi',
+            'email_verified_at' => now(),    // Teknisi doesn't need to verify email
         ]);
 
-        // MAHASISWA
+        // MAHASISWA - Must verify email
         $mhs = User::create([
             'username' => 'andi_mhs',        // Ganti name jadi username
             'nim'      => '3120500001',      // NIM Asli Mahasiswa
             'email'    => 'mahasiswa@pens.ac.id',
             'password' => Hash::make('password'),
             'role'     => 'mahasiswa',
+            // No email_verified_at - mahasiswa must verify their email
         ]);
 
         // Tiket 1: Open (Belum ada teknisi)

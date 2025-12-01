@@ -32,7 +32,14 @@ class AuthControl extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Trigger email verification
+        // Admin and Teknisi don't need email verification
+        if (in_array($user->role, ['admin', 'teknisi'])) {
+            $user->markEmailAsVerified();
+            Auth::login($user);
+            return redirect('/dashboard');
+        }
+
+        // Trigger email verification for mahasiswa
         event(new Registered($user));
 
         Auth::login($user);

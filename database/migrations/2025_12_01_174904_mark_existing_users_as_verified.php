@@ -12,10 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Mark all existing users as verified
-        // This is run when implementing email verification on an existing system
+        // Mark only admin and teknisi as verified
+        // Mahasiswa must verify their email
         DB::table('users')
             ->whereNull('email_verified_at')
+            ->whereIn('role', ['admin', 'teknisi'])
             ->update(['email_verified_at' => now()]);
     }
 
