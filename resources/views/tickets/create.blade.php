@@ -5,9 +5,15 @@
     <div class="max-w-3xl mx-auto">
         
         <div class="mb-6">
-            <a href="{{ route('tickets.index') }}" class="text-sm text-gray-500 hover:text-blue-600 flex items-center transition">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Kembali ke Daftar
+            <a href="{{ Auth::user()->role === 'mahasiswa' ? route('student.dashboard') : route('tickets.index') }}" 
+            class="text-sm text-gray-500 hover:text-blue-600 flex items-center transition group">
+                
+                <svg class="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                
+                {{-- LOGIKA TEKS: Ubah teks sesuai tujuan --}}
+                {{ Auth::user()->role === 'mahasiswa' ? 'Kembali ke Dashboard' : 'Kembali ke Daftar Tiket' }}
             </a>
         </div>
 
