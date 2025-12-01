@@ -83,25 +83,34 @@
                     <div class="bg-white p-2 rounded-xl shadow-sm border border-gray-200 flex items-center space-x-3">
                         <span class="text-xs font-medium text-gray-500 pl-2">Tampilan:</span>
                         <div class="flex bg-gray-100 p-1 rounded-lg">
-                            
-                            {{-- Tombol Grid (Kotak 4) --}}
-                            <button type="button" @click="viewMode = 'grid'" 
-                                :class="viewMode === 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
-                                class="p-2 rounded-md transition-all duration-200" title="Tampilan Grid">
-                                {{-- SVG Grid yang Diperbaiki --}}
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                            {{-- Tombol Grid --}}
+                            <button type="button" @click="viewMode = 'grid'"
+                                :class="viewMode === 'grid' 
+                                    ? 'bg-white text-blue-600 shadow-sm' 
+                                    : 'text-gray-400 hover:text-gray-600'"
+                                class="px-2 py-1.5 rounded-md transition-all duration-200 flex items-center justify-center"
+                                title="Tampilan Grid">
+
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 
+                                        012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0-01-2-2V6zM4 16a2 2 0 012-2h2a2 2 
+                                        0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 
+                                        012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                                 </svg>
                             </button>
-                            
-                            {{-- Tombol List (Garis Lurus) --}}
-                            <button type="button" @click="viewMode = 'list'" 
-                                :class="viewMode === 'list' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
-                                class="p-2 rounded-md transition-all duration-200" title="Tampilan List">
-                                {{-- SVG List --}}
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+
+                            {{-- Tombol List --}}
+                            <button type="button" @click="viewMode = 'list'"
+                                :class="viewMode === 'list' 
+                                    ? 'bg-white text-blue-600 shadow-sm' 
+                                    : 'text-gray-400 hover:text-gray-600'"
+                                class="px-2 py-1.5 rounded-md transition-all duration-200 flex items-center justify-center"
+                                title="Tampilan List">
+
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16"/>
                                 </svg>
                             </button>
                         </div>
