@@ -10,6 +10,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', function () {
     // Show landing page for guests, redirect to dashboard for authenticated users
@@ -21,6 +22,18 @@ Route::get('/', function () {
     }
     return view('landing');
 })->name('landing');
+
+// Echo test route (accessible to all authenticated users)
+Route::get('/echo-test', function () {
+    return view('echo-test');
+})->middleware('auth')->name('echo.test');
+
+// API endpoint for notification count
+Route::get('/api/notifications/count', function () {
+    return response()->json([
+        'count' => Auth::user()->unreadNotifications->count()
+    ]);
+})->middleware('auth');
 
 // GROUP GUEST
 Route::middleware('guest')->group(function () {
@@ -50,11 +63,11 @@ Route::middleware('auth')->group(function () {
     })->middleware(['throttle:6,1'])->name('verification.send');
 });
 
-// GROUP AUTH
+// Logout route (accessible by any authenticated user, even unverified)
+Route::post('/logout', [AuthControl::class, 'logout'])->middleware('auth')->name('logout');
+
+// GROUP AUTH (VERIFIED USERS ONLY)
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Logout
-    Route::post('/logout', [AuthControl::class, 'logout'])->name('logout');
 
     // --- 1. DASHBOARD REDIRECTOR (LOGIC PENGARAHAN) ---
     Route::get('/dashboard', function () {
@@ -95,7 +108,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.picture.update');
     Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])->name('profile.picture.delete');
 
-    // --- 6. AREA ADMIN ---
+    // --- 6. LIVE CHAT ---
+    // Admin chat interface
+    Route::get('/admin/chat', [ChatController::class, 'index'])->name('chat.index')
+        ->middleware('role:admin,teknisi');
+    
+    // Chat API endpoints
+    Route::post('/chat/conversation', [ChatController::class, 'getOrCreateConversation'])->name('chat.conversation');
+    Route::get('/chat/{conversationId}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/{conversationId}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/{conversationId}/assign', [ChatController::class, 'assignAdmin'])->name('chat.assign');
+    Route::post('/chat/{conversationId}/close', [ChatController::class, 'closeConversation'])->name('chat.close');
+
+    // --- 7. AREA ADMIN ---
     Route::prefix('admin')->group(function() { 
         
         // Role Management
