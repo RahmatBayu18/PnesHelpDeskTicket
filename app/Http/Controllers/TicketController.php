@@ -16,20 +16,57 @@ class TicketController extends Controller
 {
     public function index(Request $request)
     {
-        // Query ambil semua tiket (Global)
+        // 1. Query Dasar
         $query = Ticket::with(['category', 'user', 'technician'])->latest();
 
-        // Filter Status (Jika ada request filter dari view)
+        // 2. Filter Status (Jika ada request filter)
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
+        // 3. Ambil Data Tiket dengan Pagination
         $tickets = $query->paginate(10);
         
-        // Ambil list teknisi untuk dropdown assign (Khusus view Admin)
+        // 4. Hitung Statistik (Global)
+        // Kita gunakan query terpisah agar filter di atas tidak mempengaruhi total statistik keseluruhan
+        $stats = [
+            'total' => Ticket::count(),
+            'open' => Ticket::where('status', 'Open')->count(),
+            'progress' => Ticket::where('status', 'In Progress')->count(),
+            'resolved' => Ticket::where('status', 'Resolved')->count(),
+            'closed' => Ticket::where('status', 'Closed')->count(),
+        ];
+
+        // 5. Data untuk Grafik (Contoh: Tiket per Bulan selama tahun berjalan)
+        $dbDriver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+
+        if ($dbDriver === 'sqlite') {
+            // Syntax khusus SQLite: strftime('%m', ...) ambil bulan angka 01-12
+            // Kita cast ke integer agar "01" jadi 1, supaya cocok dengan looping php
+            $selectQuery = "CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as count";
+        } else {
+            // Syntax MySQL (Default)
+            $selectQuery = 'MONTH(created_at) as month, COUNT(*) as count';
+        }
+
+        $chartData = Ticket::selectRaw($selectQuery)
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Format array agar indeks 1-12 selalu ada (meski nilai 0)
+        $chartFormatted = [];
+        for ($i = 1; $i <= 12; $i++) {
+            // Karena di SQLite kita sudah CAST as INTEGER, key-nya akan berupa angka 1, 2, dst.
+            $chartFormatted[] = $chartData[$i] ?? 0;
+        }
+
+        // Ambil list teknisi untuk dropdown
         $technicians = User::where('role', 'teknisi')->get();
 
-        return view('tickets.index', compact('tickets', 'technicians'));
+        return view('tickets.index', compact('tickets', 'technicians', 'stats', 'chartFormatted'));
     }
 
    public function studentDashboard(Request $request)
@@ -182,7 +219,6 @@ class TicketController extends Controller
         }
 
         // KIRIM NOTIFIKASI (Jika status berubah)
-        // Pastikan class TicketStatusUpdated ada di App/Notifications
         if ($oldStatus !== $request->status) {
             try {
                 $ticket->user->notify(new TicketStatusUpdated($ticket, $request->status));
