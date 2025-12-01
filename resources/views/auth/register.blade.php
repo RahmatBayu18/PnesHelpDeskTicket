@@ -41,7 +41,7 @@
             <!-- Top Section Logo -->
             <div class="relative flex items-center gap-3">
                 <img 
-                    src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
+                    src="{{ asset('aset/logo-PensHelpDes.svg') }}"
                     alt="Logo"
                     class="h-12 w-auto object-contain drop-shadow-lg"
                 >
@@ -56,13 +56,13 @@
                 <div class="w-full h-80 relative rounded-xl overflow-hidden shadow-xl">
 
                     <!-- Pattern Background -->
-                    <div class="absolute inset-0 bg-cover bg-center opacity-30"
+                    <!-- <div class="absolute inset-0 bg-cover bg-center opacity-30"
                         style="background-image: url('https://i.imgur.com/example.png');">
-                    </div>
+                    </div> -->
 
                     <!-- Main Image -->
                     <img 
-                        src="{{ Vite::asset('public/aset/gedung pens.jpg') }}" 
+                        src="{{ asset('aset/gedung pens.jpg') }}" 
                         alt="Gedung PENS"
                         class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-lighten"
                     >

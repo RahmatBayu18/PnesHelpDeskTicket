@@ -9,7 +9,7 @@
             gap: 8px;
         ">
             <img 
-                src="{{ Vite::asset('public/aset/logo-PensHelpDes.svg') }}"
+                src="{{ asset('aset/logo-PensHelpDes.svg') }}"
                 alt="Logo"
                 style="
                     height: 70%;
