@@ -41,6 +41,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthControl::class, 'register']);
     Route::get('/login', [AuthControl::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthControl::class, 'login']);
+    
+    // Forgot Password Routes
+    Route::get('/forgot-password', [AuthControl::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthControl::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthControl::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthControl::class, 'resetPassword'])->name('password.update');
 });
 
 // EMAIL VERIFICATION ROUTES

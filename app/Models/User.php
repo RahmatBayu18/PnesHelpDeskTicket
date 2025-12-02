@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 use App\Mail\CustomVerificationEmail; // Tambahan
 use Illuminate\Support\Facades\Mail;  // Tambahan
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -52,5 +53,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         Mail::to($this->email)->send(new CustomVerificationEmail($this));
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token, $this->email));
     }
 }

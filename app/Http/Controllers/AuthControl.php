@@ -77,4 +77,89 @@ class AuthControl extends Controller
 
         return redirect('/');
     }
+
+    // Forgot Password Methods
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'Email tidak ditemukan dalam sistem kami.',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // Generate token
+        $token = \Illuminate\Support\Str::random(64);
+
+        // Store token in database
+        \DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email],
+            [
+                'email' => $request->email,
+                'token' => \Hash::make($token),
+                'created_at' => now(),
+            ]
+        );
+
+        // Send email notification
+        $user->sendPasswordResetNotification($token);
+
+        return back()->with('success', 'Link reset password telah dikirim ke email Anda!');
+    }
+
+    public function showResetPasswordForm(Request $request, $token)
+    {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->email
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'email.exists' => 'Email tidak ditemukan.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        // Check if token exists and not expired (60 minutes)
+        $resetRecord = \DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+        if (!$resetRecord) {
+            return back()->withErrors(['email' => 'Token reset password tidak valid.']);
+        }
+
+        // Check if token is expired (60 minutes)
+        if (now()->diffInMinutes($resetRecord->created_at) > 60) {
+            \DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            return back()->withErrors(['email' => 'Token reset password telah kadaluarsa. Silakan kirim ulang permintaan reset password.']);
+        }
+
+        // Verify token
+        if (!\Hash::check($request->token, $resetRecord->token)) {
+            return back()->withErrors(['email' => 'Token reset password tidak valid.']);
+        }
+
+        // Update password
+        $user = User::where('email', $request->email)->first();
+        $user->password = \Hash::make($request->password);
+        $user->save();
+
+        // Delete the token
+        \DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->with('success', 'Password berhasil direset! Silakan login dengan password baru Anda.');
+    }
 }

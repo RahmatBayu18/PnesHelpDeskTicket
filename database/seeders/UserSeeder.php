@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
             ]);
 
             // Tiket
-            for ($j = 1; $j <= 6; $j++) {
+            for ($j = 1; $j <= 2; $j++) {
 
                 $statusList = ['Open', 'In Progress', 'Resolved', 'Closed'];
                 $status = $statusList[array_rand($statusList)];
@@ -76,7 +76,7 @@ class UserSeeder extends Seeder
                 $assignedTechnician = ($status === 'Open') ? null : $teknisi->id;
 
                 $hasImage = rand(0, 1);
-                $imagePath = $hasImage ? 'ticket-images/contoh_error.jpg' : null;
+                $imagePath = $hasImage ? 'ticket-images/placeholder.jpg' : null;
 
                 Ticket::create([
                     'user_id'       => $mhs->id,
