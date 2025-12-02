@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: penshelpdesk_postgres
@@ -22,7 +21,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # pgAdmin
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: penshelpdesk_pgadmin
@@ -40,7 +38,6 @@ services:
     depends_on:
       - postgres
 
-  # Laravel Application
   app:
     build:
       context: .
@@ -50,10 +47,12 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
+      - vendor_data:/var/www/vendor
+      - node_modules_data:/var/www/node_modules
       - ./storage:/var/www/storage
       - ./bootstrap/cache:/var/www/bootstrap/cache
     ports:
-      - "8000:8000"
+      - "80:8000"
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -69,6 +68,7 @@ services:
         condition: service_healthy
     command: >
       sh -c "
+        composer install --optimize-autoloader --no-dev &&
         npm install &&
         npm run build &&
         php artisan storage:link &&
@@ -79,7 +79,6 @@ services:
         php artisan serve --host=0.0.0.0 --port=8000
       "
 
-  # Laravel Reverb (WebSocket Server)
   reverb:
     build:
       context: .
@@ -89,6 +88,8 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
+      - vendor_data:/var/www/vendor
+      - node_modules_data:/var/www/node_modules
     ports:
       - "8080:8080"
     environment:
@@ -100,11 +101,17 @@ services:
     networks:
       - laravel_network
     depends_on:
-      postgres:
-        condition: service_healthy
-    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+      app:
+        condition: service_started
+    command: >
+      sh -c "
+        while [ ! -f vendor/autoload.php ]; do
+          echo 'Waiting for vendor to be installed...';
+          sleep 2;
+        done &&
+        php artisan reverb:start --host=0.0.0.0 --port=8080
+      "
 
-  # Queue Worker (Optional - untuk background jobs)
   queue:
     build:
       context: .
@@ -114,6 +121,8 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
+      - vendor_data:/var/www/vendor
+      - node_modules_data:/var/www/node_modules
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -123,9 +132,16 @@ services:
     networks:
       - laravel_network
     depends_on:
-      postgres:
-        condition: service_healthy
-    command: php artisan queue:work --sleep=3 --tries=3
+      app:
+        condition: service_started
+    command: >
+      sh -c "
+        while [ ! -f vendor/autoload.php ]; do
+          echo 'Waiting for vendor to be installed...';
+          sleep 2;
+        done &&
+        php artisan queue:work --sleep=3 --tries=3
+      "
 
 networks:
   laravel_network:
@@ -134,3 +150,5 @@ networks:
 volumes:
   postgres_data:
   pgadmin_data:
+  vendor_data:
+  node_modules_data:
