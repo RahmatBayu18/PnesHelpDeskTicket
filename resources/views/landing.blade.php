@@ -12,6 +12,7 @@
     
     <!-- Particles.js for background effect -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
         .gradient-text {
@@ -90,28 +91,26 @@
         .cta-content > * {
             opacity: 1; /* Start visible, GSAP will handle animation */
         }
+
+        [x-cloak] { display: none !important; }
+
     </style>
 </head>
 <body class="bg-gray-50 overflow-x-hidden">
 
-    <!-- Navigation -->
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] bg-white/90 backdrop-blur-md shadow-lg rounded-full px-6 py-3 flex justify-between items-center transition-all duration-300" id="navbar" style="z-index: 9999;">
-        <a href="/" class="flex items-center space-x-2 group">
+    <nav 
+        x-data="{ isOpen: false }"
+        class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] bg-white/90 backdrop-blur-md shadow-lg rounded-[2rem] px-6 py-3 flex flex-wrap justify-between items-center transition-all duration-300 z-[9999]" 
+        id="navbar"
+    >
+        {{-- 1. LOGO SECTION --}}
+        <a href="/" class="flex items-center space-x-2 group shrink-0">
             <div style="font-family: 'Inter', sans-serif; font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                <div style="
-                    height: 38px; 
-                    display: flex; 
-                    align-items: center; 
-                    gap: 8px;
-                ">
+                <div style="height: 38px; display: flex; align-items: center; gap: 8px;">
                     <img 
                         src="{{ asset('aset/logo-PensHelpDes.svg') }}"
                         alt="Logo"
-                        style="
-                            height: 70%;
-                            width: auto;
-                            object-fit: contain;
-                        "
+                        style="height: 70%; width: auto; object-fit: contain;"
                     >
 
                     <div style="color: #0056D2; font-size: 20px; font-weight: 600;">
@@ -121,11 +120,46 @@
             </div>
         </a>
         
-        <div class="flex items-center space-x-2">
+        {{-- 2. DESKTOP BUTTONS (Hidden on Mobile) --}}
+        <div class="hidden md:flex items-center space-x-2">
             <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition">
                 Masuk
             </a>
             <a href="{{ route('register') }}" class="px-5 py-2 text-sm font-bold bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                Daftar Sekarang
+            </a>
+        </div>
+
+        {{-- 3. HAMBURGER BUTTON (Mobile Only) --}}
+        <div class="md:hidden flex items-center">
+            <button @click="isOpen = !isOpen" class="text-gray-600 hover:text-blue-600 focus:outline-none p-2">
+                {{-- Icon Garis Tiga (Menu) --}}
+                <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                {{-- Icon Silang (Close) --}}
+                <svg x-show="isOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        {{-- 4. MOBILE MENU CONTAINER (Expands Downwards) --}}
+        <div 
+            x-show="isOpen" 
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-2"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2"
+            x-cloak
+            class="w-full mt-4 md:hidden flex flex-col space-y-3 border-t border-gray-100 pt-4"
+        >
+            <a href="{{ route('login') }}" class="block w-full text-center px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                Masuk
+            </a>
+            <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 text-sm font-bold bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-md transition">
                 Daftar Sekarang
             </a>
         </div>

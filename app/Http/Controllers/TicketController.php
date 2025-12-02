@@ -15,6 +15,7 @@ use App\Models\Announcement;
 
 class TicketController extends Controller
 {
+    // admin tok le
     public function index(Request $request)
     {
         // 1. Query Dasar
