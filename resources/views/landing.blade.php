@@ -167,7 +167,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-30">
         <!-- Particles Background -->
         <div id="particles-js"></div>
         
