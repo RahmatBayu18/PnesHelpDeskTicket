@@ -6,6 +6,7 @@
     <title>PensHelpDesk - Sistem Helpdesk Kampus</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <link rel="icon" href="{{ asset('aset/logo-PensHelpDes.svg') }}" type="svg">
     <!-- GSAP Core -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
