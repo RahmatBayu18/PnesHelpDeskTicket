@@ -4,7 +4,15 @@
   <img src="public/aset/logo-PensHelpDes.svg" alt="PENS Help Desk Logo" width="300">
 </p>
 
+<p align="center">
+  <a href="https://penshelpdesk.web.id" target="_blank">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-penshelpdesk.web.id-blue?style=for-the-badge" alt="Live Demo">
+  </a>
+</p>
+
 Sistem manajemen tiket help desk untuk Politeknik Elektronika Negeri Surabaya (PENS). Aplikasi ini memungkinkan mahasiswa melaporkan keluhan fasilitas kampus, admin mengelola tiket, dan teknisi menangani perbaikan secara real-time.
+
+> **Live Demo**: [https://penshelpdesk.web.id](https://penshelpdesk.web.id)
 
 ## Fitur Utama
 
@@ -43,7 +51,97 @@ Sistem manajemen tiket help desk untuk Politeknik Elektronika Negeri Surabaya (P
 
 ## Instalasi & Setup
 
-### Metode 1: Manual Installation
+### Metode 1: Docker Compose (Recommended)
+
+#### Clone Repository
+```bash
+git clone https://github.com/RahmatBayu18/PnesHelpDeskTicket.git
+cd PnesHelpDeskTicket
+```
+
+#### Konfigurasi Environment
+```bash
+# Copy file .env.example
+cp .env.example .env
+```
+
+**Edit `.env` untuk Docker:**
+```env
+APP_NAME=PensHelpDesk
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=penshelpdesk
+DB_USERNAME=riskicontoh
+DB_PASSWORD=riskicontoh
+
+REVERB_HOST=reverb
+REVERB_PORT=8080
+REVERB_SCHEME=http
+```
+
+#### Build & Run Containers
+```bash
+# Build dan jalankan semua container
+docker-compose up -d --build
+
+# Cek status container
+docker-compose ps
+```
+
+**Services yang berjalan:**
+- **App** (Laravel): http://localhost:80
+- **Reverb** (WebSocket): http://localhost:8080
+- **PostgreSQL**: localhost:5432
+- **pgAdmin**: http://localhost:5050
+
+#### Generate Application Key
+```bash
+# Generate APP_KEY di container
+docker-compose exec app php artisan key:generate
+```
+
+#### Akses Aplikasi
+- **Web App**: http://localhost
+- **pgAdmin**: http://localhost:5050
+  - Email: `admin@admin.com`
+  - Password: `admin`
+
+**Default User Credentials:**
+| Role | Email | Password | NIM/ID |
+|------|-------|----------|--------|
+| Admin | admin@pens.ac.id | password | ADM001 |
+| Teknisi | teknisi@pens.ac.id | password | TEK001 |
+| Mahasiswa 1 | mahasiswa1@pens.ac.id | password | 3120500001 |
+| Mahasiswa 2 | mahasiswa2@pens.ac.id | password | 3120500002 |
+
+
+#### Troubleshooting Docker
+
+**Jika migrasi gagal saat startup:**
+```bash
+docker-compose exec app php artisan migrate:fresh --seed
+```
+
+**Jika permission error:**
+```bash
+docker-compose exec app chmod -R 775 storage bootstrap/cache
+docker-compose exec app chown -R www-data:www-data storage bootstrap/cache
+```
+
+**Rebuild frontend assets:**
+```bash
+docker-compose exec app npm run build
+```
+
+---
+
+### Metode 2: Manual Installation
 
 #### Clone Repository
 ```bash
@@ -71,7 +169,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-#### onfigurasi Database
+#### Konfigurasi Database
 Edit file `.env` dan sesuaikan dengan database PostgreSQL :
 ```env
 DB_CONNECTION=pgsql
@@ -146,108 +244,6 @@ Buka browser dan akses: **http://localhost:8000**
 | Teknisi | teknisi@pens.ac.id | password | TEK001 |
 | Mahasiswa 1 | mahasiswa1@pens.ac.id | password | 3120500001 |
 | Mahasiswa 2 | mahasiswa2@pens.ac.id | password | 3120500002 |
-
----
-
-### Metode 2: Docker Compose (Recommended)
-
-#### Clone Repository
-```bash
-git clone https://github.com/RahmatBayu18/PnesHelpDeskTicket.git
-cd PnesHelpDeskTicket
-```
-
-#### Konfigurasi Environment
-```bash
-# Copy file .env.example
-cp .env.example .env
-```
-
-**Edit `.env` untuk Docker:**
-```env
-APP_NAME=PensHelpDesk
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost
-
-DB_CONNECTION=pgsql
-DB_HOST=postgres
-DB_PORT=5432
-DB_DATABASE=penshelpdesk
-DB_USERNAME=riskicontoh
-DB_PASSWORD=riskicontoh
-
-REVERB_HOST=reverb
-REVERB_PORT=8080
-REVERB_SCHEME=http
-```
-
-#### Build & Run Containers
-```bash
-# Build dan jalankan semua container
-docker-compose up -d --build
-
-# Cek status container
-docker-compose ps
-```
-
-**Services yang berjalan:**
-- **App** (Laravel): http://localhost:80
-- **Reverb** (WebSocket): http://localhost:8080
-- **PostgreSQL**: localhost:5432
-- **pgAdmin**: http://localhost:5050
-
-#### Generate Application Key
-```bash
-# Generate APP_KEY di container
-docker-compose exec app php artisan key:generate
-```
-
-#### Akses Aplikasi
-- **Web App**: http://localhost
-- **pgAdmin**: http://localhost:5050
-  - Email: `admin@admin.com`
-  - Password: `admin`
-
-**Login Credentials** (sama seperti manual installation)
-
-#### Mengelola Container
-```bash
-# Lihat logs
-docker-compose logs -f app
-
-# Stop semua container
-docker-compose down
-
-# Stop dan hapus volumes (reset database)
-docker-compose down -v
-
-# Restart container tertentu
-docker-compose restart app
-
-# Akses shell container
-docker-compose exec app bash
-```
-
-#### Troubleshooting Docker
-
-**Jika migrasi gagal saat startup:**
-```bash
-# Jalankan manual di container
-docker-compose exec app php artisan migrate:fresh --seed
-```
-
-**Jika permission error:**
-```bash
-docker-compose exec app chmod -R 775 storage bootstrap/cache
-docker-compose exec app chown -R www-data:www-data storage bootstrap/cache
-```
-
-**Rebuild frontend assets:**
-```bash
-docker-compose exec app npm run build
-```
 
 ---
 
