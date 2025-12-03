@@ -18,17 +18,36 @@ class Ticket extends Model
         'description', 
         'location', 
         'image_path', 
-        'technician_id', // Penting untuk assignment
+        'technician_id', 
         'status'
     ];
 
-    // Otomatis Generate Ticket Code 6 Digit saat Create
+    /**
+     * Get full URL for the ticket image.
+     * Returns storage URL when image_path exists and file is present, otherwise returns public asset placeholder.
+     *
+     * @return string
+     */
+    public function getImageUrlAttribute()
+    {
+        if ($this->image_path) {
+            try {
+                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->image_path)) {
+                    return asset('storage/' . $this->image_path);
+                }
+            } catch (\Throwable $e) {
+                
+            }
+        }
+
+        return asset('aset/placeholder.jpg');
+    }
+
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($ticket) {
-            // Cek biar tidak error kalau ticket_code sudah diisi manual (misal saat seeding)
             if (empty($ticket->ticket_code)) {
                 do {
                     $code = strtoupper(Str::random(6));
