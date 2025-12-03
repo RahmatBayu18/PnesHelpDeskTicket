@@ -50,7 +50,7 @@
                         <div class="mt-4">
                             <h3 class="font-semibold text-gray-900 mb-2">Lampiran Foto</h3>
                             <div class="rounded-lg overflow-hidden border border-gray-200 w-full md:w-1/2">
-                                <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="Lampiran" class="w-full h-auto object-cover">
+                                <img src="{{ $ticket->image_url }}" alt="Lampiran" class="w-full h-auto object-cover">
                             </div>
                         </div>
                     @endif
