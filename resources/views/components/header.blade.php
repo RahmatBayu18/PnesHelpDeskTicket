@@ -83,8 +83,8 @@
                         
                         @if(auth()->user()->unreadNotifications->count() > 0)
                             <span class="absolute top-1 right-1 flex h-2.5 w-2.5">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
                             </span>
                         @endif
                     </button>
@@ -94,7 +94,15 @@
                         x-show="notifOpen" 
                         @click.outside="notifOpen = false" 
                         x-cloak 
-                        class="absolute right-0 mt-4 w-80 bg-white shadow-xl rounded-2xl border border-gray-100 p-2 z-50 origin-top-right"
+                        class="
+                            z-50 bg-white shadow-xl rounded-2xl border border-gray-100 p-2
+                            
+                            /* --- TAMPILAN MOBILE (FIXED & TENGAH) --- */
+                            fixed top-20 left-1/2 -translate-x-1/2 w-[90vw] max-w-sm
+                            
+                            /* --- TAMPILAN DESKTOP (ABSOLUTE & KANAN) --- */
+                            md:absolute md:top-10 md:right-0 md:left-auto md:translate-x-0 md:w-80 md:mt-4 md:origin-top-right
+                        "
                         x-transition:enter="transition ease-out duration-200 opacity-0 scale-95"
                         x-transition:enter-end="opacity-100 scale-100"
                         x-transition:leave="transition ease-in duration-75 opacity-100 scale-100"
@@ -146,7 +154,7 @@
                     </div>
                     
                     {{-- Menu Dropdown Profile --}}
-                    <div class="absolute right-0 mt-4 w-48 bg-white shadow-xl rounded-2xl border border-gray-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
+                    <div class="absolute right-0 mt-4 w-48 top-10 bg-white shadow-xl rounded-2xl border border-gray-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Profile Saya</a>
                         <div class="h-px bg-gray-100 my-1"></div>
                         <form action="{{ route('logout') }}" method="POST">

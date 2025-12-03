@@ -28,4 +28,17 @@ class RoleController extends Controller
 
         return back()->with('success', 'Role pengguna berhasil diperbarui!');
     }
+
+    // Menghapus user
+    public function destroy(User $user)
+    {
+        // Validasi ganda: Cek apakah user mencoba menghapus dirinya sendiri
+        if ($user->id === Auth::id()) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'Pengguna berhasil dihapus dari sistem.');
+    }
 }

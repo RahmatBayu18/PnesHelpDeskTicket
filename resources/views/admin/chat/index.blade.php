@@ -1,126 +1,131 @@
 @extends('layouts.app')
 
 @section('title', 'Live Chat Support')
-
 @section('content')
-<div class="fixed inset-0 top-32 bg-gray-100">
-    <div class="h-full max-w-7xl mx-auto p-4">
-        <div class="bg-white rounded-xl shadow-lg h-full overflow-hidden">
-            <div class="flex h-full">
-            <!-- Conversations Sidebar -->
-            <div class="w-1/3 border-r border-gray-200 flex flex-col">
-                <!-- Header -->
-                <div class="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+<div class="fixed inset-0 top-25 bg-gray-100 z-0">
+    <div class="h-full max-w-7xl mx-auto p-4 md:py-8 md:px-6">
+        
+        <div class="bg-white rounded-2xl shadow-2xl h-full overflow-hidden border border-gray-200 flex relative">
+            
+            <div id="conversations-sidebar" class="w-full md:w-1/3 border-r border-gray-200 flex flex-col h-full bg-white z-10">
+                
+                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
                     <h2 class="text-xl font-bold text-white flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-3 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                         </svg>
-                        Live Chat Support
+                        HelpDesk Chat
                     </h2>
-                    <p class="text-blue-100 text-sm mt-1">{{ $conversations->count() }} conversation(s)</p>
+                    <p class="text-blue-100 text-xs mt-1 font-medium ml-9">{{ $conversations->total() }} conversations total</p>
                 </div>
 
-                <!-- Conversations List -->
-                <div id="conversations-list" class="flex-1 overflow-y-auto">
+                <div id="conversations-list" class="flex-1 overflow-y-auto custom-scrollbar">
                     @forelse($conversations as $conversation)
-                        <div class="conversation-item p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors" 
+                        <div class="conversation-item p-4 border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-all duration-200 group" 
                              data-conversation-id="{{ $conversation->id }}"
                              onclick="selectConversation({{ $conversation->id }})">
                             <div class="flex items-start">
-                                <div class="flex-shrink-0">
-                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                                <div class="flex-shrink-0 relative">
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg border-2 border-white shadow-sm group-hover:border-blue-200 transition-colors">
                                         {{ substr($conversation->user->username, 0, 1) }}
                                     </div>
+                                    @if($conversation->unread_count > 0)
+                                        <span class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 ring-2 ring-white text-[10px] font-bold text-white shadow-sm">
+                                            {{ $conversation->unread_count }}
+                                        </span>
+                                    @endif
                                 </div>
-                                <div class="ml-3 flex-1 min-w-0">
+
+                                <div class="ml-4 flex-1 min-w-0">
                                     <div class="flex items-center justify-between">
-                                        <p class="text-sm font-semibold text-gray-900 truncate">
+                                        <p class="text-sm font-bold text-gray-900 truncate group-hover:text-blue-700">
                                             {{ $conversation->user->username }}
                                         </p>
-                                        @if($conversation->unread_count > 0)
-                                            <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
-                                                {{ $conversation->unread_count }}
-                                            </span>
-                                        @endif
+                                        <span class="text-[10px] text-gray-400 font-medium bg-gray-50 px-2 py-0.5 rounded-full">
+                                            {{ $conversation->latestMessage ? $conversation->latestMessage->created_at->shortAbsoluteDiffForHumans() : '' }}
+                                        </span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1">{{ $conversation->user->nim }} • {{ $conversation->user->email }}</p>
-                                    @if($conversation->latestMessage)
-                                        <p class="text-sm text-gray-600 truncate mt-1">
-                                            {{ Str::limit($conversation->latestMessage->message, 40) }}
+                                    
+                                    <p class="text-xs text-gray-500 mt-0.5 mb-1 font-mono">{{ $conversation->user->nim }}</p>
+                                    
+                                    <div class="flex justify-between items-end">
+                                        <p class="text-xs text-gray-600 truncate max-w-[140px]">
+                                            {{ Str::limit($conversation->latestMessage->message ?? 'No messages', 30) }}
                                         </p>
-                                    @endif
-                                    <div class="flex items-center justify-between mt-2">
-                                        <span class="text-xs text-gray-400">
-                                            {{ $conversation->last_message_at?->diffForHumans() ?? 'No messages' }}
-                                        </span>
-                                        <span class="text-xs px-2 py-1 rounded-full {{ $conversation->status === 'open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ ucfirst($conversation->status) }}
-                                        </span>
+                                        
+                                        <span class="w-2 h-2 rounded-full {{ $conversation->status === 'open' ? 'bg-green-500' : 'bg-gray-400' }}" title="{{ ucfirst($conversation->status) }}"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="p-8 text-center text-gray-500">
-                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
-                            <p class="font-medium">No conversations yet</p>
-                            <p class="text-sm mt-1">Waiting for students to start chatting</p>
+                        <div class="h-full flex flex-col items-center justify-center text-gray-400 p-8">
+                            <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                            <p class="text-sm">Belum ada chat.</p>
                         </div>
                     @endforelse
                 </div>
+
+                @if($conversations->hasPages())
+                <div class="p-3 border-t border-gray-200 bg-gray-50 text-xs">
+                    {{ $conversations->links('pagination::simple-tailwind') }}
+                </div>
+                @endif
             </div>
 
-            <!-- Chat Area -->
-            <div class="flex-1 flex flex-col min-h-0">
-                <div id="no-conversation-selected" class="flex-1 flex items-center justify-center text-gray-400">
-                    <div class="text-center">
-                        <svg class="w-24 h-24 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="chat-interface" class="hidden md:flex flex-1 flex-col min-h-0 bg-gray-50 absolute md:relative inset-0 w-full z-20 md:z-auto">
+                
+                <div id="no-conversation-selected" class="flex-1 flex flex-col items-center justify-center text-gray-400 bg-gray-50/50">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
-                        <p class="text-lg font-medium">Select a conversation</p>
-                        <p class="text-sm mt-2">Choose a conversation from the sidebar to start chatting</p>
                     </div>
+                    <p class="text-lg font-semibold text-gray-600">Selamat Datang di Support</p>
+                    <p class="text-sm mt-2 text-gray-500">Pilih percakapan di sebelah kiri untuk memulai.</p>
                 </div>
 
-                <div id="chat-container" class="hidden h-full flex-col">
-                    <!-- Chat Header -->
-                    <div class="flex-shrink-0 p-4 border-b border-gray-200 bg-gray-50">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold">
-                                    <span id="chat-user-initial"></span>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm font-semibold text-gray-900" id="chat-user-name"></p>
-                                    <p class="text-xs text-gray-500" id="chat-user-info"></p>
-                                </div>
+                <div id="chat-container" class="hidden h-full flex-col w-full bg-white">
+                    <div class="flex-shrink-0 px-6 py-3 border-b border-gray-100 flex items-center justify-between shadow-sm bg-white z-10">
+                        <div class="flex items-center">
+                            <button onclick="backToConversations()" class="md:hidden mr-3 text-gray-500 hover:text-blue-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-md">
+                                <span id="chat-user-initial"></span>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="closeConversation()" class="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    Close Chat
-                                </button>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-gray-900" id="chat-user-name"></p>
+                                <div class="flex items-center space-x-2">
+                                    <p class="text-xs text-gray-500" id="chat-user-info"></p>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                </div>
                             </div>
                         </div>
+                        
+                        <button onclick="closeConversation()" class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50" title="Close Ticket">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
                     </div>
 
-                    <!-- Messages Area -->
-                    <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 min-h-0">
-                        <!-- Messages will be inserted here -->
-                    </div>
+                    <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-[#f8fafc] scroll-smooth">
+                        </div>
 
-                    <!-- Message Input -->
-                    <div class="flex-shrink-0 p-4 border-t border-gray-200 bg-white">
-                        <form id="message-form" onsubmit="sendMessage(event)" class="flex space-x-2">
+                    <div class="flex-shrink-0 p-4 bg-white border-t border-gray-100">
+                        <form id="message-form" onsubmit="sendMessage(event)" class="relative flex items-center">
                             <input type="text" 
                                    id="message-input" 
-                                   placeholder="Type your message..." 
-                                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   required>
+                                   placeholder="Ketik pesan balasan..." 
+                                   class="w-full pl-5 pr-14 py-3 bg-gray-50 border-0 rounded-full text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all shadow-inner text-gray-700"
+                                   required
+                                   autocomplete="off">
+                            
                             <button type="submit" 
-                                    class="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="absolute right-2 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-md transition-transform transform active:scale-95">
+                                <svg class="w-5 h-5 translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                 </svg>
                             </button>
@@ -131,227 +136,14 @@
         </div>
     </div>
 </div>
-
 @push('scripts')
 <script>
-let currentConversationId = null;
-let currentUserId = {{ Auth::id() }};
-let echoChannel = null;
-
-// Notification sound function
-function playNotificationSound() {
-    try {
-        // Create a simple notification sound using Web Audio API
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (error) {
-        console.error('Error playing sound:', error);
-    }
-}
-
-function selectConversation(conversationId) {
-    currentConversationId = conversationId;
-    
-    // Update UI
-    document.querySelectorAll('.conversation-item').forEach(item => {
-        item.classList.remove('bg-blue-50', 'border-l-4', 'border-blue-500');
-    });
-    document.querySelector(`[data-conversation-id="${conversationId}"]`)?.classList.add('bg-blue-50', 'border-l-4', 'border-blue-500');
-    
-    document.getElementById('no-conversation-selected').classList.add('hidden');
-    document.getElementById('chat-container').classList.remove('hidden');
-    document.getElementById('chat-container').classList.add('flex');
-    
-    loadMessages(conversationId);
-    
-    // Unsubscribe from previous channel if exists
-    if (echoChannel) {
-        window.Echo.leave(`chat.${echoChannel}`);
-    }
-    
-    // Subscribe to new channel
-    console.log('Subscribing to channel:', `chat.${conversationId}`);
-    echoChannel = conversationId;
-    
-    window.Echo.private(`chat.${conversationId}`)
-        .listen('.message.sent', (e) => {
-            console.log('Message received:', e);
-            appendMessage(e, true); // Pass true to indicate this is a new real-time message
-            scrollToBottom();
-        })
-        .error((error) => {
-            console.error('Channel error:', error);
-        });
-}
-
-function loadMessages(conversationId) {
-    fetch(`/chat/${conversationId}/messages`)
-        .then(response => response.json())
-        .then(data => {
-            // Update header
-            const user = data.conversation.user;
-            document.getElementById('chat-user-initial').textContent = user.username.charAt(0).toUpperCase();
-            document.getElementById('chat-user-name').textContent = user.username;
-            document.getElementById('chat-user-info').textContent = `${user.nim} • ${user.email}`;
-            
-            // Clear and load messages
-            const container = document.getElementById('messages-container');
-            container.innerHTML = '';
-            
-            data.messages.forEach(message => {
-                appendMessage(message, false); // Pass false to indicate historical message (no sound)
-            });
-            
-            scrollToBottom();
-        });
-}
-
-// Notification sound function
-function playNotificationSound() {
-    try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (error) {
-        console.error('Error playing sound:', error);
-    }
-}
-
-function appendMessage(message, isNewMessage = false) {
-    const container = document.getElementById('messages-container');
-    const isOwnMessage = message.user_id === currentUserId;
-    
-    // Check if message already exists to prevent duplicates
-    const existingMessage = container.querySelector(`[data-message-id="${message.id}"]`);
-    if (existingMessage) {
-        console.log('Message already exists, skipping:', message.id);
-        return;
-    }
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`;
-    messageDiv.setAttribute('data-message-id', message.id);
-    
-    messageDiv.innerHTML = `
-        <div class="max-w-xs lg:max-w-md">
-            ${!isOwnMessage ? `<p class="text-xs text-gray-500 mb-1">${message.user.username}</p>` : ''}
-            <div class="px-4 py-2 rounded-lg ${isOwnMessage ? 'bg-blue-600 text-white' : 'bg-white text-gray-900 shadow'}">
-                <p class="text-sm">${escapeHtml(message.message)}</p>
-            </div>
-            <p class="text-xs text-gray-400 mt-1 ${isOwnMessage ? 'text-right' : ''}">${formatTime(message.created_at)}</p>
-        </div>
-    `;
-    
-    container.appendChild(messageDiv);
-    
-    // Play sound only for new real-time messages from other users
-    if (!isOwnMessage && isNewMessage) {
-        playNotificationSound();
-    }
-}
-
-function sendMessage(event) {
-    event.preventDefault();
-    
-    const input = document.getElementById('message-input');
-    const message = input.value.trim();
-    
-    if (!message || !currentConversationId) return;
-    
-    fetch(`/chat/${currentConversationId}/send`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Don't append here - let Echo broadcast handle it
-        // This prevents duplicate messages
-        input.value = '';
-    })
-    .catch(error => {
-        console.error('Error sending message:', error);
-        alert('Failed to send message. Please try again.');
-    });
-}
-
-function closeConversation() {
-    if (!currentConversationId) return;
-    
-    if (confirm('Are you sure you want to close this conversation?')) {
-        fetch(`/chat/${currentConversationId}/close`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(() => {
-            location.reload();
-        });
-    }
-}
-
-function scrollToBottom() {
-    const container = document.getElementById('messages-container');
-    container.scrollTop = container.scrollHeight;
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-}
-
-// Assign admin to conversation on first interaction
-function assignToMe() {
-    if (!currentConversationId) return;
-    
-    fetch(`/chat/${currentConversationId}/assign`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    });
-}
-
-// Auto-assign when selecting conversation
-document.addEventListener('DOMContentLoaded', function() {
-    // Listen for new conversations
-    // You can add more real-time updates here
-});
+    window.LiveChatConfig = {
+        userId: {{ Auth::id() }},
+        csrfToken: '{{ csrf_token() }}'
+    };
 </script>
+
+@vite(['resources/js/livechat.js'])
 @endpush
 @endsection

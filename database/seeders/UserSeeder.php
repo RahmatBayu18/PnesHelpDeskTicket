@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
             ]);
 
             // Tiket
-            for ($j = 1; $j <= 2; $j++) {
+            for ($j = 1; $j <= 5; $j++) {
 
                 $statusList = ['Open', 'In Progress', 'Resolved', 'Closed'];
                 $status = $statusList[array_rand($statusList)];

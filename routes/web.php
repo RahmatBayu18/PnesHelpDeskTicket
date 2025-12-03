@@ -150,6 +150,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Role Management
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::put('/roles/{user}', [RoleController::class, 'update'])->name('roles.update');
+
+        //Destroyy user lek
+        Route::delete('/roles/{user}', [RoleController::class, 'destroy'])->name('roles.destroy');
         
         // Announcement Management
         Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');

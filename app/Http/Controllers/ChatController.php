@@ -16,12 +16,8 @@ class ChatController extends Controller
     public function index()
     {
         $conversations = ChatConversation::with(['user', 'latestMessage'])
-            ->orderBy('last_message_at', 'desc')
-            ->get()
-            ->map(function ($conversation) {
-                $conversation->unread_count = $conversation->unreadMessagesCount(Auth::id());
-                return $conversation;
-            });
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10); 
 
         return view('admin.chat.index', compact('conversations'));
     }
