@@ -1,28 +1,26 @@
 <!-- Floating Chat Widget -->
 @if(Auth::check() && Auth::user()->role === 'mahasiswa')
-<div id="chat-widget" class="fixed bottom-6 right-6 z-50">
-    <!-- Chat Button -->
+<div id="chat-widget" class="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50">
     <button id="chat-toggle-btn" onclick="toggleChat()" 
-            class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200 flex items-center justify-center relative">
-        <svg id="chat-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200 flex items-center justify-center relative">
+        <svg id="chat-icon" class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
         </svg>
-        <svg id="close-icon" class="w-8 h-8 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg id="close-icon" class="w-6 h-6 md:w-8 md:h-8 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
-        <span id="unread-badge" class="absolute -top-1 -right-1 hidden w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+        <span id="unread-badge" class="absolute -top-1 -right-1 hidden w-5 h-5 md:w-6 md:h-6 bg-red-500 text-white text-[10px] md:text-xs font-bold rounded-full flex items-center justify-center">
             0
         </span>
     </button>
 
-    <!-- Chat Window -->
-    <div id="chat-window" class="hidden absolute bottom-20 right-0 w-96 h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-        <!-- Chat Header -->
-        <div class="p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+    <div id="chat-window" class="hidden absolute bottom-16 md:bottom-20 right-0 w-[calc(100vw-2rem)] md:w-96 h-[60vh] md:h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden origin-bottom-right border border-gray-200">
+        
+        <div class="p-3 md:p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="font-bold text-lg">Live Support</h3>
-                    <p class="text-xs text-blue-100">We're here to help!</p>
+                    <h3 class="font-bold text-base md:text-lg">Live Support</h3>
+                    <p class="text-[10px] md:text-xs text-blue-100">We're here to help!</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <div id="connection-status" class="w-2 h-2 bg-green-400 rounded-full"></div>
@@ -30,15 +28,13 @@
             </div>
         </div>
 
-        <!-- Messages Area -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-            <div class="text-center text-gray-500 text-sm py-4">
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 bg-gray-50">
+            <div class="text-center text-gray-500 text-xs md:text-sm py-4">
                 <p>👋 Hello! How can we help you today?</p>
             </div>
         </div>
 
-        <!-- Typing Indicator -->
-        <div id="typing-indicator" class="hidden px-4 py-2 text-sm text-gray-500">
+        <div id="typing-indicator" class="hidden px-4 py-2 text-xs md:text-sm text-gray-500">
             <span class="inline-flex space-x-1">
                 <span class="animate-bounce">●</span>
                 <span class="animate-bounce" style="animation-delay: 0.1s;">●</span>
@@ -47,17 +43,16 @@
             <span class="ml-2">Admin is typing...</span>
         </div>
 
-        <!-- Message Input -->
-        <div class="p-4 border-t border-gray-200 bg-white">
+        <div class="p-3 md:p-4 border-t border-gray-200 bg-white">
             <form id="chat-form" onsubmit="sendChatMessage(event)" class="flex space-x-2">
                 <input type="text" 
                        id="chat-input" 
                        placeholder="Type your message..." 
-                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs md:text-sm"
                        required>
                 <button type="submit" 
-                        class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="px-3 md:px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all flex items-center justify-center">
+                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                     </svg>
                 </button>
