@@ -139,6 +139,8 @@ services:
         while [ ! -f /var/www/storage/app-ready ]; do
           sleep 2
         done
+        echo '[Queue] Waiting 5 more seconds for migrations...'
+        sleep 5
         echo '[Queue] Starting Queue worker...'
         php artisan queue:work --sleep=3 --tries=3
 
