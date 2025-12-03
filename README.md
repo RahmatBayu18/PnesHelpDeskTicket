@@ -63,6 +63,9 @@ cd PnesHelpDeskTicket
 ```bash
 # Copy file .env.example
 cp .env.example .env
+
+# generate application key 
+php artisan key:generate
 ```
 
 **Edit `.env` untuk Docker:**
@@ -87,10 +90,8 @@ REVERB_SCHEME=http
 
 #### Build & Run Containers
 ```bash
-# Build dan jalankan semua container
 docker-compose up -d --build
 
-# Cek status container
 docker-compose ps
 ```
 
