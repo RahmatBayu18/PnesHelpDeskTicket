@@ -80,8 +80,8 @@ DB_CONNECTION=pgsql
 DB_HOST=postgres
 DB_PORT=5432
 DB_DATABASE=penshelpdesk
-DB_USERNAME=riskicontoh
-DB_PASSWORD=riskicontoh
+DB_USERNAME=exampleriski
+DB_PASSWORD=exampleriski
 
 REVERB_HOST=reverb
 REVERB_PORT=8080

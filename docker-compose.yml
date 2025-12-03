@@ -5,14 +5,14 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: penshelpdesk
-      POSTGRES_USER: chitanda
-      POSTGRES_PASSWORD: chitanda
+      POSTGRES_USER: exampleriski
+      POSTGRES_PASSWORD: exampleriski
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - laravel_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U chitanda -d penshelpdesk"]
+      test: ["CMD-SHELL", "pg_isready -U exampleriski -d penshelpdesk"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,8 +53,8 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_DATABASE=penshelpdesk
-      - DB_USERNAME=chitanda
-      - DB_PASSWORD=chitanda
+      - DB_USERNAME=exampleriski
+      - DB_PASSWORD=exampleriski
       - REVERB_HOST=reverb
       - REVERB_PORT=8080
     networks:
@@ -94,8 +94,8 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_DATABASE=penshelpdesk
-      - DB_USERNAME=chitanda
-      - DB_PASSWORD=chitanda
+      - DB_USERNAME=exampleriski
+      - DB_PASSWORD=exampleriski
     networks:
       - laravel_network
     depends_on:
@@ -126,8 +126,8 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_DATABASE=penshelpdesk
-      - DB_USERNAME=chitanda
-      - DB_PASSWORD=chitanda
+      - DB_USERNAME=exampleriski
+      - DB_PASSWORD=exampleriski
     networks:
       - laravel_network
     depends_on:
